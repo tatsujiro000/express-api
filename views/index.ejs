@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-body">
+                <h1 class="title"><%= text %> </h1>
+            </div>    
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+
+            <form>
+                <label>チーズの追加</label>
+                <div scope="cheese">
+                    <div class="block">
+                        <input id="name" class="input" required type="text" name="name" placeholder="チーズの名前を入れてね"/>
+                    </div>
+                    <div class="block">
+                        <input id="country" class="input" required type="text" name="country" placeholder="チーズの原産国を入れてね"/>
+                    </div>
+                    <div class="block">
+                        <input id="variety" class="input" required type="text" name="variety" placeholder="チーズの種類を入れてね"/>
+                    </div>
+                </div>
+                <div class="block">
+                    <input id="submit" type="submit" value="追加" class="button"/>
+                </div>
+            </form>
+    
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <h2 class="title">チーズ名鑑</h2>
+            <ul>
+                <% for(let cheese of cheeses){ %>
+                    <li>
+                        <span><%= cheese.name %></span>
+                        <span><%= cheese.country %></span>
+                        <span><%= cheese.variety %></span>
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+    </section>
+
+    <script>
+    $("input#submit").click(function() {
+
+        const button = $(this);
+        button.attr("disabled", true);
+
+        const data = {
+            name: $("#name").val(),
+            country: $("#country").val(),
+            variety: $("#variety").val()
+        };
+        console.log(data);
+
+
+        $.ajax({
+            type:"post",
+            url:"/",
+            data:JSON.stringify(data),
+            contentType: 'application/json',
+            dataType: "json",
+            success: function(json_data) {
+                // JSON Arrayの先頭が成功フラグ、失敗の場合2番目がエラーメッセージ
+                if (!json_data[0]) {    // サーバが失敗を返した場合
+                    alert("Transaction error. " + json_data[1]);
+                    return;
+                }
+                // 成功時処理
+                location.reload();
+            },
+            error: function() {
+                alert("Server Error. Please try again later.");
+            },
+            complete: function() {      // 成功・失敗に関わらず通信が終了した際の処理
+                button.attr("disabled", false);  // ボタンを再び enableにする
+            }
+        });
+    });
+
+    </script>
+</body>
+</html>
