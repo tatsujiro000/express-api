@@ -45,9 +45,9 @@
             <ul>
                 <% for(let cheese of cheeses){ %>
                     <li>
-                        <span><%= cheese.name %></span>
-                        <span><%= cheese.country %></span>
-                        <span><%= cheese.variety %></span>
+                        [チーズの名前]：<span><%= cheese.name %></span>
+                        [原産国]：<span><%= cheese.country %></span>
+                        [チーズの種類]：<span><%= cheese.variety %></span>
                     </li>
                 <% } %>
             </ul>
@@ -73,7 +73,7 @@
             url:"/",
             data:JSON.stringify(data),
             contentType: 'application/json',
-            dataType: "json",
+            dataType: "text",
             success: function(json_data) {
                 // JSON Arrayの先頭が成功フラグ、失敗の場合2番目がエラーメッセージ
                 if (!json_data[0]) {    // サーバが失敗を返した場合
@@ -83,11 +83,13 @@
                 // 成功時処理
                 location.reload();
             },
-            error: function() {
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus);
                 alert("Server Error. Please try again later.");
             },
             complete: function() {      // 成功・失敗に関わらず通信が終了した際の処理
                 button.attr("disabled", false);  // ボタンを再び enableにする
+                location.reload();
             }
         });
     });
