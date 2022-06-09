@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title  %> </title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <%- include('./error_messages'); %>
+    <%- include('./header'); %>
+
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-body">
+                <h1 class="title is-1"><%= title %> </h1>
+            </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <form action="/signin" method="post" class="box">
+                <div class="field">
+                    <label class="label">User Name</label>
+                    <div class="control">
+                        <input id="userName" class="input" required type="text" name="userName" placeholder="ex)oshikiri"/>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Password</label>
+                    <div class="control">
+                        <input id="password" class="input" required type="password" name="password" placeholder="ex)×××××××"/>
+                    </div>
+                </div>
+                <div class="block">
+                    <input id="submit" class="button is-primary"  value="signin" type="submit" />
+                </div>
+            </form>
+        </div>
+    </section>
+
+</body>
+</html>

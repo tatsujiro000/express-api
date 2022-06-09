@@ -4,55 +4,79 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>チーズAPIだよ</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
-    <section class="hero">
-        <div class="container">
-            <div class="hero-body">
-                <h1 class="title"><%= text %> </h1>
-            </div>    
-        </div>
-    </section>
-    <section class="section">
-        <div class="container">
+    <%- include('./header'); %>
+    <%- include('./error_messages'); %>
 
-            <form>
-                <label>チーズの追加</label>
-                <div scope="cheese">
-                    <div class="block">
-                        <input id="name" class="input" required type="text" name="name" placeholder="チーズの名前を入れてね"/>
-                    </div>
-                    <div class="block">
-                        <input id="country" class="input" required type="text" name="country" placeholder="チーズの原産国を入れてね"/>
-                    </div>
-                    <div class="block">
-                        <input id="variety" class="input" required type="text" name="variety" placeholder="チーズの種類を入れてね"/>
-                    </div>
-                </div>
-                <div class="block">
-                    <input id="submit" type="submit" value="追加" class="button"/>
-                </div>
-            </form>
+    <% if(isAuth) { %>
+
+        <section class="section">
+            <div class="container">
+
+                <form class="box">
+                    <h2 class="title is-2">チーズの追加</h2>
+                    <div scope="cheese">
+                        <div class="block">
+                            <input id="name" class="input" required type="text" name="name" placeholder="チーズの名前を入れてね"/>
+                        </div>
+                        <div class="block">
+                            <input id="country" class="input" required type="text" name="country" placeholder="チーズの原産国を入れてね"/>
+                        </div>
+                        <div class="block">
+                            <input id="variety" class="input" required type="text" name="variety" placeholder="チーズの種類を入れてね"/>
+                        </div>
+                        <div class="block">
+                            <input id="submit" type="submit" value="追加" class="button is-primary"/>
+                        </div>
     
-        </div>
-    </section>
-    <section class="section">
-        <div class="container">
-            <h2 class="title">チーズ名鑑</h2>
-            <ul>
-                <% for(let cheese of cheeses){ %>
-                    <li>
-                        [チーズの名前]：<span><%= cheese.name %></span>
-                        [原産国]：<span><%= cheese.country %></span>
-                        [チーズの種類]：<span><%= cheese.variety %></span>
-                    </li>
-                <% } %>
-            </ul>
-        </div>
-    </section>
+                    </div>
+                </form>
+        
+            </div>
+        </section>
+        <section class="section">
+            <div class="container">
+                <div class="box">
+
+                    <h2 class="title is-2">チーズ名鑑</h2>
+
+                    <table class="table is-striped is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>チーズ No.</th>
+                                <th>チーズの名前</th>
+                                <th>原産国</th>
+                                <th>チーズの種類</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for(let cheese of cheeses){ %>
+                                <tr>
+                                    <td><span><%= cheese.id %></span></td>
+                                    <td><span><%= cheese.name %></span></td>
+                                    <td><span><%= cheese.country %></span></td>
+                                    <td><span><%= cheese.variety %></span></td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </section>
+    <% } else { %>
+        <section class="section">
+            <div class="container">
+                <h1 class="title is-1">Welcome to the World of Cheese</h1>
+            </div>
+        </section>
+    <% } %>
+
 
     <script>
     $("input#submit").click(function() {
