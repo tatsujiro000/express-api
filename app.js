@@ -3,8 +3,19 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const cookieSession = require("cookie-session");
+const secret = "secretCuisine123";
 
 const app = express();
+
+app.use(
+  cookieSession({
+    name: "session",
+    keys: [secret],
+    // Cookie Options
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  })
+);
 
 app.set('views', path.join(__dirname, 'views'));
 app.set("view engine", "ejs");
@@ -12,10 +23,14 @@ app.set("view engine", "ejs");
 app.use(logger('dev'));
 app.use(express.json());
 
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));//trueじゃね？
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// authorization
+require("./config/passport")(app);
+
+// router
 app.use('/', require('./routes'));
 
 

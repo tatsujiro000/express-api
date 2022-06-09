@@ -1,20 +1,23 @@
 const express = require("express");
+const con = require('../database');
 const router = express.Router();
-const mysql = require('mysql');
 
 // const knex = require('../db/knex');
+// const mysql = require('mysql');
+
+
 let cheeses = [];
 
-const connection = mysql.createConnection({
-    // host: 'localhost',
-    host: '127.0.0.1',
-    user: 'root',
-    password: '*)N5%zSBF&kE',
-    database: 'cheeses_api'
-});
+// const con = mysql.createConnection({
+//     // host: 'localhost',
+//     host: '127.0.0.1',
+//     user: 'root',
+//     password: '*)N5%zSBF&kE',
+//     database: 'cheeses_api'
+// });
 
 
-connection.connect((err) => {
+con.connect((err) => {
     if (err) {
       console.log('error connecting: ' + err.stack);
       return
@@ -23,33 +26,45 @@ connection.connect((err) => {
   });
 
 router.get('/', function (req, res, next) {
-    res.render('index', {
-        text: 'チーズAPIだよ',
-        cheeses: cheeses,
-    });
+  const userId = req.session.userid;
+  const isAuth = Boolean(userId);
+
+
+  // knex("cheeses")
+  // .select("*")
+  // .then(function (results) {
+  //   console.log(results);
+  //   res.render('index', {
+  //   text: "チーズAPIだよ",
+  //   cheeses: results,
+  //   });
+  // })
+  // .catch(function (err) {
+  //   console.error(err);
+  //   res.render('index', {
+  //     text: "チーズAPIだよ",
+  //   });
+  // });
+  con.query(
+    `select * from cheeses;`,
+    (error,results) => {
+      console.log(error);
+      // console.log(results);
+      res.render('index', {
+          text: 'チーズAPIだよ',
+          cheeses: results,
+          isAuth:isAuth,
+      });
+    }
+  );
 });
 
-// router.get("/", (req,res,next) =>{
-//     knex("cheeses")
-//         .select("*")
-//         .then(function(results){
-//             console.log(results);
-//             res.render('index',{
-//                 text: "I'm チーズAPI",
-//                 cheeses: results,
-//             })
-
-//         })
-//         .catch(function(err){
-//             console.log(err);
-//             res.render('index',{
-//                 text:'エラーです',
-//             })
-//         })
-// });
 
 router.post('/', function (req, res, next) {
-    connection.connect((err) => {
+    const userId = req.session.userid;
+    const isAuth = Boolean(userId);
+
+    con.connect((err) => {
       if (err) {
         console.log('error connecting: ' + err.stack);
         return
@@ -62,9 +77,10 @@ router.post('/', function (req, res, next) {
         country: req.body.country,
         variety: req.body.variety,
     }
-    connection.query(
+    con.query(
         `insert into cheeses (name, country, variety) values ('${cheese.name}', '${cheese.country}', '${cheese.variety}' );`,
         (error, results) => {
+          // console.log(results);
             console.log(error);
             res.redirect("/");
         }
@@ -93,16 +109,20 @@ router.post('/', function (req, res, next) {
 //         variety: req.body.variety,
 //     }
 
-    // connection.query(
-    //     `insert into cheese (user_id, name, country, variety) values (1, '${cheese.name}', '${cheese.country}', '${cheese.variety}' );`,
-    //     (error, results) => {
-    //         console.log(error);
-    //         res.redirect("/");
-    //     }
-    //   );
+//     con.query(
+//         `insert into cheese (user_id, name, country, variety) values (1, '${cheese.name}', '${cheese.country}', '${cheese.variety}' );`,
+//         (error, results) => {
+//             console.log(error);
+//             res.redirect("/");
+//         }
+//       );
 
-    // cheeses.push(cheese);
+//     cheeses.push(cheese);
 // });
 
+
+router.use('/signup', require('./signup'));
+router.use('/signin', require('./signin'));
+router.use('/logout', require('./logout'));
 
 module.exports = router;
