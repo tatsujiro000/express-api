@@ -4,8 +4,7 @@ const bcrypt = require("bcrypt");
 const router = express.Router();
 
 router.get('/', function(req, res, next){
-    const userId = req.session.userid;
-    const isAuth = Boolean(userId);
+    const isAuth = req.isAuthenticated();
 
     res.render('signup', {
         title:'Sign up',
@@ -57,18 +56,5 @@ router.post('/', function(req, res, next){
     } catch (err) {
         console.log(err);            
     }
-
-    // connection.query(
-    //     `select * from users where name like 'aaa';`,
-    //     (error,result) => {
-    //         try {
-    //             console.log(username);
-    //             console.log(result);
-    //         } catch (error) {
-    //             console.log(error);
-    //         }
-    
-    //     }
-    // );
 });
 module.exports = router;

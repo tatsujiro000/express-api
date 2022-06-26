@@ -2,19 +2,9 @@ const express = require("express");
 const con = require('../database');
 const router = express.Router();
 
-// const knex = require('../db/knex');
-// const mysql = require('mysql');
-
 
 let cheeses = [];
 
-// const con = mysql.createConnection({
-//     // host: 'localhost',
-//     host: '127.0.0.1',
-//     user: 'root',
-//     password: '*)N5%zSBF&kE',
-//     database: 'cheeses_api'
-// });
 
 
 con.connect((err) => {
@@ -26,25 +16,10 @@ con.connect((err) => {
   });
 
 router.get('/', function (req, res, next) {
-  const userId = req.session.userid;
-  const isAuth = Boolean(userId);
+  const isAuth = req.isAuthenticated();
+  //passportライブラリの関数でログイン状態を確認できる
 
 
-  // knex("cheeses")
-  // .select("*")
-  // .then(function (results) {
-  //   console.log(results);
-  //   res.render('index', {
-  //   text: "チーズAPIだよ",
-  //   cheeses: results,
-  //   });
-  // })
-  // .catch(function (err) {
-  //   console.error(err);
-  //   res.render('index', {
-  //     text: "チーズAPIだよ",
-  //   });
-  // });
   con.query(
     `select * from cheeses;`,
     (error,results) => {
@@ -61,8 +36,10 @@ router.get('/', function (req, res, next) {
 
 
 router.post('/', function (req, res, next) {
-    const userId = req.session.userid;
-    const isAuth = Boolean(userId);
+    const isAuth = req.isAuthenticated();
+    const userId = req.user.id;
+    console.log('req', req);
+
 
     con.connect((err) => {
       if (err) {
@@ -73,14 +50,13 @@ router.post('/', function (req, res, next) {
     });
     let cheese = {
         name: req.body.name,
-        // id: cheeses.length + 1,
         country: req.body.country,
         variety: req.body.variety,
+        user_id: userId,
     }
     con.query(
-        `insert into cheeses (name, country, variety) values ('${cheese.name}', '${cheese.country}', '${cheese.variety}' );`,
+        `insert into cheeses (name, country, variety, user_id) values ('${cheese.name}', '${cheese.country}', '${cheese.variety}', '${cheese.user_id}' );`,
         (error, results) => {
-          // console.log(results);
             console.log(error);
             res.redirect("/");
         }
@@ -88,37 +64,6 @@ router.post('/', function (req, res, next) {
   });
   
 
-// router.post("/", (req,res,next) => {
-//     knex("cheeses")
-//         .insert({id:1, content: cheese})
-//         .then(function() {
-//             res.redirect("/");
-//         })
-//         .catch(function (err) {
-//             console.error(err);
-//             res.render('index', {
-//                 title:'エラーです',
-//             });
-//           });
-
-
-//     let cheese = {
-//         name: req.body.name,
-//         // id: cheeses.length + 1,
-//         country: req.body.country,
-//         variety: req.body.variety,
-//     }
-
-//     con.query(
-//         `insert into cheese (user_id, name, country, variety) values (1, '${cheese.name}', '${cheese.country}', '${cheese.variety}' );`,
-//         (error, results) => {
-//             console.log(error);
-//             res.redirect("/");
-//         }
-//       );
-
-//     cheeses.push(cheese);
-// });
 
 
 router.use('/signup', require('./signup'));
